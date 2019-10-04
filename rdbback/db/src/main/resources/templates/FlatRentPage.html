@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <meta charset="ISO-8859-1" />
+        <title>Борис успешный риэлтор</title>
+    </head>
+    <body>
+        <div th:each="flat : ${list}">
+            <b th:text="${flat.id}" />
+            <div th:text="${flat.avitoId}" />
+            <div th:text="${flat.map}" />
+            <div th:text="${flat.description}" />
+            <div th:text="${flat.price}" />
+            <div th:text="${flat.address}" />
+            <div>
+                <span th:each="photo : ${flat.photos}">
+                    <img width="250" th:src="${'http://' + photo}"/>
+                </span>
+            </div>
+            <img th:src="${flat.phone}"/>
+            <br/>
+        </div>
+    </body>
+</html>

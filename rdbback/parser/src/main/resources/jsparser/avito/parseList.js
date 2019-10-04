@@ -1,0 +1,1 @@
+return [...document.getElementsByClassName('item-description-title-link')].map(a => a.href)
