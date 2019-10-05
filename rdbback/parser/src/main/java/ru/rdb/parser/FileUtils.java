@@ -1,28 +1,18 @@
 package ru.rdb.parser;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Map;
 
 public class FileUtils {
 
-    public String getResourceFile(String name) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        return (new File(classLoader.getResource(name).getFile())).getAbsolutePath();
-    }
-
-    public String readResourceFile(String name) {
-        return readFile(getResourceFile(name));
-    }
-
-    public String readFile(String path) {
+    public String readResourceFile(String path) {
         try {
-            return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+            return IOUtils.toString(new ClassPathResource(path).getInputStream(), StandardCharsets.UTF_8.name());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

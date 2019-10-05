@@ -28,6 +28,9 @@ public class App implements CommandLineRunner {
     @Override
     public void run(String... args) {
         List<RentFlat> list = avitoParser.process();
+        if (list.size() == 0) {
+            throw new RuntimeException("flat not found");
+        }
         LOGER.info("find {} flat", list.size());
         rentFlatRepository.clear();
         list.forEach(rentFlatRepository::add);
