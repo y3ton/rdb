@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ru.rdb.models.RentFlat;
+import ru.rdb.models.DbId;
+import ru.rdb.models.Link;
+import ru.rdb.models.RawData;
+import ru.rdb.parser.Repositories.LinkRepository;
+import ru.rdb.parser.Repositories.RawRepository;
 
 import java.util.List;
 
@@ -18,7 +22,9 @@ public class App implements CommandLineRunner {
     @Autowired
     AvitoParser avitoParser;
     @Autowired
-    RentFlatRepository rentFlatRepository;
+    RawRepository rawRepository;
+    @Autowired
+    LinkRepository linkRepository;
 
 
     public static void main(String[] args) {
@@ -27,14 +33,25 @@ public class App implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<RentFlat> list = avitoParser.process();
+
+        linkRepository.add(new Link(
+                new DbId(AvitoParser.AVITO_GROUP, "init"),
+                AvitoParser.AVITO_BASE_URL,
+                null,
+                null));
+
+        Link link = linkRepository.getRandom(AvitoParser.AVITO_GROUP);
+        LOGER.info("get url {}", link.getUrl());
+
+        List<RawData> list = avitoParser.process(link.getUrl());
         if (list.size() == 0) {
             throw new RuntimeException("flat not found");
         }
         LOGER.info("find {} flat", list.size());
-        rentFlatRepository.clear();
-        list.forEach(rentFlatRepository::add);
+        list.forEach(rawRepository::add);
         LOGER.info("flat was seved", list.size());
+
+        linkRepository.delete(link.getId());
     }
 
 

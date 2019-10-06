@@ -1,17 +1,14 @@
 package ru.rdb.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.List;
 
-@Document(value = "rentflat")
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RentFlat {
 
-    @Id
     private String id;
     private String url;
     private Date dateCreate;

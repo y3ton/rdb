@@ -1,10 +1,9 @@
 package ru.rdb.parser;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.rdb.models.RentFlat;
+import ru.rdb.models.DbId;
+import ru.rdb.models.RawData;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,24 +12,23 @@ import java.util.stream.Collectors;
 public class AvitoParser {
 
     public static final String AVITO_BASE_URL = "https://www.avito.ru/moskva_i_mo/kvartiry/sdam/na_dlitelnyy_srok?cd=1&pmax=50000&pmin=0&user=1&s=104";
+    public static final String AVITO_GROUP = "avito";
 
     private final Selenium selenium;
-    private final ObjectMapper mapper;
     private final Map<String, String> scriptCache;
     private final FileUtils fileUtils;
 
     @Autowired
     public AvitoParser(Selenium selenium) {
         this.selenium = selenium;
-        this.mapper = new ObjectMapper();
         this.scriptCache = new HashMap<>();
         this.fileUtils = new FileUtils();
     }
 
 
-    public List<RentFlat> process() {
-        List<String> urls = parseList(AvitoParser.AVITO_BASE_URL);
-        return urls.stream().limit(5).map(this::parsePage).collect(Collectors.toList());
+    public List<RawData> process(String linkUrl) {
+        List<String> urls = parseList(linkUrl);
+        return urls.stream().limit(25).map(this::parsePage).collect(Collectors.toList());
     }
 
     public List<String> parseList(String url) {
@@ -43,7 +41,7 @@ public class AvitoParser {
         }
     }
 
-    public RentFlat parsePage(String url) {
+    public RawData parsePage(String url) {
         selenium.get(url);
         selenium.execJs("document.getElementsByClassName('item-phone-button-sub-text')[0].click()");
         try {
@@ -54,17 +52,7 @@ public class AvitoParser {
         selenium.execJs("document.getElementsByClassName('close')[0].click()");
         String js = fileUtils.readFile("jsparser/avito/parseRentFlat.js", scriptCache);
         String json = (String) selenium.execJs(js);
-
-        RentFlat result;
-        try {
-            result = mapper.readValue(json, RentFlat.class);
-        } catch (JsonProcessingException e) {
-            result = new RentFlat();
-            result.setErr(e.getMessage());
-        }
-        result.setUrl(url);
-        result.setDateCreate(new Date());
-        return result;
+        return new RawData(new DbId("avito", url), json, null, url, null);
     }
 
 }
