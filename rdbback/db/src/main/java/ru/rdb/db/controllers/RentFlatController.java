@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.rdb.db.repositories.RawDataRepository;
+import ru.rdb.models.Consts;
 import ru.rdb.models.RawData;
 import ru.rdb.models.RentFlat;
 
@@ -32,7 +35,9 @@ public class RentFlatController {
     @RequestMapping(path = "/avitoflat")
     public String getPage(Model model) {
         LOGGER.info("page load /custom/rentflat");
-        List<RentFlat> list = rawDataRepository.findByGroup("avito").stream()
+        PageRequest page = PageRequest.of(0, 20, Sort.by("createDate").descending());
+        List<RentFlat> list = rawDataRepository.findByIdGroup(Consts.AVITO_GROUP, page)
+                .stream()
                 .map(this::fromRawData)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

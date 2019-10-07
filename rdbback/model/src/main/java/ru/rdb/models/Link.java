@@ -4,8 +4,10 @@ package ru.rdb.models;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Entity(name = "links")
+@Entity
+@Table(name = "links")
 public class Link {
 
     @EmbeddedId

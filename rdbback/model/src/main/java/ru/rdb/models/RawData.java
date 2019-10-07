@@ -7,9 +7,11 @@ import org.hibernate.annotations.TypeDef;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
-@Entity(name = "raw_data")
+@Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+@Table(name = "raw_data")
 public class RawData {
 
     @EmbeddedId

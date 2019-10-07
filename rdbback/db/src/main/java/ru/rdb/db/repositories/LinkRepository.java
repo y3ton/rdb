@@ -9,7 +9,14 @@ import ru.rdb.models.Link;
 
 public interface LinkRepository extends CrudRepository<Link, DbId> {
 
-    @Query(value = "SELECT l FROM links l WHERE l.id.group=:group and (readDate is null or readDate < :maxDate)")
+    @Query(
+            nativeQuery = true,
+            value =
+            "SELECT id, grp, url, create_date, read_date " +
+            "FROM public.links " +
+            "where grp = :group and (read_date is null or read_date < :maxDate) " +
+            "order by random() " +
+            "limit 1")
     Link getRandom(@Param("group") String group, @Param("maxDate") Long maxDate);
 
 }

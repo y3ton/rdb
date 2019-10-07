@@ -32,7 +32,7 @@ public class Selenium {
     String proxyUrl;
 
 
-    public void changeProxy(String proxyUrl) {
+    public void restart(String proxyUrl) {
         close();
         this.proxyUrl = proxyUrl;
         start();

@@ -11,7 +11,7 @@ import ru.rdb.models.Link;
 @RequestMapping("/links")
 public class LinkController {
 
-    public static long LINK_HOLD_TIMEOUT = 60000L;
+    public static long LINK_HOLD_TIMEOUT = 5 * 60 * 1000L;
 
 
     private final LinkRepository linkRepositories;
